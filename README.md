@@ -2,6 +2,7 @@
 
 
 ![Texas Winter Storm 2021](https://news.utexas.edu/wp-content/uploads/2021/07/iStock-1302560239.jpg)
+
 *Source: The University of Texas at Austin, July 13, 2021. [New Data on February Texas Blackouts Reveals Unprecedented Impact on Energy and Financial Systems](https://news.utexas.edu/2021/07/13/new-data-on-february-texas-blackouts-reveals-unprecedented-impact-on-energy-and-financial-systems/).*
 
 ## About 
@@ -27,3 +28,4 @@ TEXAS-EXTREME-WEATHER-IMPACTS/
 ├── README.md
 └── texas_blackout.qmd
 ```
+
