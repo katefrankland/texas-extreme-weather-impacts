@@ -12,20 +12,24 @@ Texas experienced severe winter storms in February 2021, causing a loss of power
 ## Repo Structure 
 
 ```{r}
+
 TEXAS-EXTREME-WEATHER-IMPACTS/
 │
 ├── data/
-│   │   ├── ACS_2019_5YR_TRACT_48_TEXAS.gdb.zip
-│   │   ├── gis_osm_buildings_a_free_1.gpkg
-│   │   ├── gis_osm_buildings_a_free_1.gpkg.zip
-│   │   ├── gis_osm_roads_free_1.gpkg
-│   │   ├── gis_osm_roads_free_1.gpkg.zip
-│   │   └── VNP46A1_*.tif
+│   ├── ACS_2019_5YR_TRACT_48_TEXAS.gdb.zip
+│   ├── gis_osm_buildings_a_free_1.gpkg
+│   ├── gis_osm_roads_free_1.gpkg
+│   ├── VNP46A1.A2021038.h08v05.001.2021039064328.tif
+│   ├── VNP46A1.A2021038.h08v06.001.2021039064329.tif
+│   ├── VNP46A1.A2021047.h08v05.001.2021048091106.tif
+│   └── VNP46A1.A2021047.h08v06.001.2021048091105.tif
+│
 ├── docs/
 │   └── texas_blackout.pdf
 │
 ├── .gitignore
 ├── README.md
 └── texas_blackout.qmd
+
 ```
 
