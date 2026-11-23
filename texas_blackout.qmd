@@ -158,12 +158,12 @@ print(nrow(blackout_homes))
 ```{r}
 tmap_mode("plot")
 
-tm_basemap("OpenStreetMap")
+tm_basemap("OpenStreetMap") +
 tm_shape(outside_200m) +
-tm_polygons(fill = "lightblue") +
+  tm_polygons(fill = "lightblue") +
 tm_shape(blackout_homes) +
-tm_polygons(fill = "blue") +
+  tm_polygons(fill = "blue") +
 tm_scalebar(position = c("left", "bottom")) +
 tm_compass(position = c("right", "top")) +
-tm_title("Houston homes affected by blackouts in February 2021")
+tm_title("Houston Homes Affected by Blackouts in February 2021")
 ```
