@@ -1,0 +1,169 @@
+---
+title: "Houston’s February 2021 Blackout"
+subtitle: "EDS 223 | Homework Assignment 4"
+author: "Kate Frankland"
+date: 11-21-2026
+engine: knitr
+format: pdf
+toc: false
+execute:
+  eval: true
+  echo: true
+  output: true
+  warning: false
+  message: false
+---
+
+## Background
+
+Texas experienced severe winter storms in February 2021, causing a loss of power infrastructure and impacting homes in the Houston area. Being on an independent grid, Texas is unable to import energy from neighboring states at large scales when their power infrastructure goes down. For this assignment, Visible Infrared Imaging Radiometer Suite (VIIRS) data is used, which contains measurements of nighttime brightness, looking at the dates February 7, 2021, and February 16, 2021. 
+
+## Loading Packages 
+
+```{r}
+#| output: False 
+
+library(tidyverse)
+library(terra)
+library(sf)
+library(tmap)
+library(raster)
+library(here)
+library(kableExtra)
+```
+
+
+```{r}
+vnp_feb7a<- rast(here(
+  "data", "VNP46A1.A2021038.h08v05.001.2021039064328.tif"))
+
+vnp_feb7b <- rast(here(
+  "data", "VNP46A1.A2021038.h08v06.001.2021039064329.tif"))
+
+vnp_feb16a <- rast(here(
+  "data", "VNP46A1.A2021047.h08v05.001.2021048091106.tif"))
+
+vnp_feb16b <- rast(here(
+  "data", "VNP46A1.A2021047.h08v06.001.2021048091105.tif"))
+
+roads <- read_sf('data/gis_osm_roads_free_1.gpkg')
+buildings <- read_sf('data/gis_osm_buildings_a_free_1.gpkg')
+```
+
+## Data Merging 
+
+```{r}
+same.crs(vnp_feb7a, vnp_feb7b)
+same.crs(vnp_feb16a, vnp_feb16b)
+```
+
+```{r}
+vnp_feb7 <- terra::merge(vnp_feb7a, vnp_feb7b)
+vnp_feb16 <- terra::merge(vnp_feb16a, vnp_feb16b)
+```
+
+## Create Blackout Mask 
+```{r}
+# Finding the difference in light intensity, Subtracting Feb 16 from Feb 7  
+difference <- vnp_feb7 - vnp_feb16
+
+# Peint a summary of the raster
+print(difference)
+```
+
+```{r}
+# Reclassify the matrix 
+rclassify <-  matrix(c(
+    -Inf, 200, NA, # not likely a blackout 
+    200, Inf, 1), # more likely to be a blackout 
+    ncol = 3, byrow = TRUE) # three column matrix, one row 
+
+reclassified <- terra::classify(difference, rcl = rclassify, right = TRUE)
+```
+
+```{r}
+blackout_vector <- terra::as.polygons(reclassified, na.rm = TRUE)
+```
+
+```{r}
+blackout_polygons <- sf::st_as_sf(blackout_vector)
+print(blackout_polygons)
+```
+
+```{r}
+blackout_polygons <- sf::st_make_valid(blackout_polygons)
+```
+
+
+```{r}
+# Creating a bounding box for Houston 
+houston_bbox <- st_bbox(
+  c(xmin = -96.5, ymin = 29, xmax = -94.5, ymax = 30.5),
+  crs = sf::st_crs(4326)
+)
+
+# making the bounding box into a polygon
+houston_box <- sf::st_as_sfc(houston_bbox)
+```
+
+
+```{r}
+# Matching the bbox to the crs 
+houston_box <- st_transform(houston_box, st_crs(blackout_polygons))
+
+# keep only the blackout geometries 
+
+blackout_crop <- st_intersection(st_geometry(blackout_polygons), houston_box)
+```
+
+
+```{r}
+# Reprojection 
+blackout_houston <- st_sf(geometry = st_transform(blackout_crop, crs = 3083))
+
+crs(blackout_houston)
+```
+
+## Exclude highways from the cropped blackout mask 
+```{r}
+# Identify areas within 200m of all highways 
+
+roads <- st_transform(subset(roads, fclass == "motorway"), crs = 3083)
+
+roads_buffer <- st_union(st_buffer(roads, dist = 200))
+
+```
+
+
+```{r}
+# find areas that experienced blackouts that are further than 200m from a highway 
+
+outside_200m <- st_sf(geometry = st_difference(
+  st_geometry(blackout_houston), roads_buffer))
+```
+
+## Identify the number of homes likely impacted by blackouts 
+```{r}
+# identify homes that overlap with areas that experienced blackouts 
+buildings <- st_transform(buildings, crs = 3083)
+```
+
+```{r}
+blackout_homes <- st_filter(buildings, outside_200m)
+print(nrow(blackout_homes))
+```
+
+## Viusalization 
+
+```{r}
+tmap_mode("plot")
+
+tm_basemap("OpenStreetMap")
+tm_shape(outside_200m) +
+tm_polygons(fill = "lightblue") +
+tm_shape(blackout_homes) +
+tm_polygons(fill = "blue") +
+tm_scalebar(position = c("left", "bottom")) +
+tm_compass(position = c("right", "top")) +
+tm_title("Houston homes affected by blackouts in February 2021")
+```
