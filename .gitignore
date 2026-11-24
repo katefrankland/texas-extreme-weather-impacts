@@ -53,3 +53,12 @@ rsconnect/
 src/*.o
 src/*.so
 src/*.dll
+
+# Large GIS datasets
+data/*.gpkg
+data/*.gpkg.zip
+data/*.gdb.zip
+
+# Other large raster files
+data/*.tif
+data/*.tiff
