@@ -13,7 +13,7 @@ Texas experienced severe winter storms in February 2021, causing a loss of power
 
 ```{r}
 
-TEXAS-EXTREME-WEATHER-IMPACTS/
+TEXAS-EXTREME-WEATHER-IMPACTS
 │
 ├── data/
 │   ├── ACS_2019_5YR_TRACT_48_TEXAS.gdb.zip
@@ -26,7 +26,6 @@ TEXAS-EXTREME-WEATHER-IMPACTS/
 │
 ├── docs/
 │   └── texas_blackout.pdf
-│
 ├── .gitignore
 ├── README.md
 └── texas_blackout.qmd
