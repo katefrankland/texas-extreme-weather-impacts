@@ -150,7 +150,7 @@ buildings <- st_transform(buildings, crs = 3083)
 
 ```{r}
 blackout_homes <- st_filter(buildings, outside_200m)
-print(nrow(blackout_homes))
+#print(nrow(blackout_homes))
 ```
 
 ## Viusalization 
